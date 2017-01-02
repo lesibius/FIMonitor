@@ -34,3 +34,12 @@ class Security:
         
         self.ISIN = isin
         self.MarketValue = mv
+    
+    def SetDuration(self,duration):
+        self.Duration = duration
+    
+    def SetYieldCurve(self,yieldcurve):
+        self.YieldCurve = yieldcurve
+        
+    def GetPercentLoss(self):
+        return self.Duration * self.YieldCurve.YieldChange

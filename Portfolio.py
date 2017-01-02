@@ -5,6 +5,9 @@ Created on Mon Jan  2 11:34:49 2017
 @author: clem
 """
 
+from Loss import *
+
+
 class Portfolio:
     
     """
@@ -31,6 +34,7 @@ class Portfolio:
         self.ID = portfolioID
         self.Description = description
         self.Holdings = {}
+        self.ScenarioLosses = {}
     
     
     def AddSecurity(self,sec,nomAmount):
@@ -86,4 +90,9 @@ class Portfolio:
         for sec, nomAmount in self.Holdings.iteritems():
             tempMV = tempMV + nomAmount * sec.MarketValue
         return tempMV
+        
+    def ComputeLoss(self,scenarioName):
+        self.ScenarioLosses[scenarioName] = {}
+        for sec, nomAmount in self.Holdings.iteritems():
+            self.ScenarioLosses[scenarioName][sec]=Loss(sec.GetPercentLoss(),sec.MarketValue * nomAmount)
         
