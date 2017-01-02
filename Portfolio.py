@@ -31,7 +31,8 @@ class Portfolio:
         self.ID = portfolioID
         self.Description = description
         self.Holdings = {}
-        
+    
+    
     def AddSecurity(self,sec,nomAmount):
         
         """
@@ -59,7 +60,8 @@ class Portfolio:
         except KeyError as ke:
             self.Holdings[sec] = nomAmount
             return False
-            
+    
+    
     def GetMarketValue(self):
         
         """
