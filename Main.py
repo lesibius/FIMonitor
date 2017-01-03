@@ -8,6 +8,7 @@ Created on Mon Jan  2 11:31:08 2017
 from Security import *
 from Portfolio import *
 from YieldCurve import *
+from Workflow import *
 
 yild1 = YieldCurve()
 yild2 = YieldCurve()
