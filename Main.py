@@ -8,6 +8,22 @@ Created on Mon Jan  2 11:31:08 2017
 from Security import *
 from Portfolio import *
 from YieldCurve import *
+from Workflow import *
+
+wf = Workflow()
+
+wf.SetNewPortfolio(1,"Managed Accounts")
+wf.SetNewPortfolio(2,"Execution Only")
+
+wf.SetNewSecurity("US123123",0.9937,"USD",5.0)
+wf.SetNewSecurity("CHF143543",1.134,"CHF",9.0)
+
+wf.AddSecurityToPortfolio(1,"US123123",1000)
+wf.AddSecurityToPortfolio(1,"CHF143543",1000)
+
+wf.AddSecurityToPortfolio(2,"US123123",500)
+wf.AddSecurityToPortfolio(2,"CHF143543",1500)
+
 
 yild1 = YieldCurve()
 yild2 = YieldCurve()
