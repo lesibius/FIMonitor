@@ -8,6 +8,7 @@ Created on Tue Jan  3 18:41:22 2017
 from Portfolio import *
 from Security import *
 from YieldCurve import *
+from EconomicModel import *
 
 class Workflow:
     
@@ -18,7 +19,7 @@ class Workflow:
     def __init__(self):
         self.Portfolios = {}
         self.Securities = {}
-        self.EconomicModels = []
+        self.EconomicModels = {}
         self.EconomicModelGarbage = []
         
     def SetNewPortfolio(self,pid,description = None):
@@ -39,7 +40,11 @@ class Workflow:
     def SetNewSecurity(self,isin,mv,currency,duration):
         
         """
-        Add a new Security instance to the workflow or override an existing Security instance (based on the isin)
+        Add a new Security instance to the workflow or override an existing Security 
+        instance (based on the isin)
+        
+        If economic models have been added to the workflow, the new security is linked to the
+        model
         
         Parameters
         ----------
@@ -59,15 +64,21 @@ class Workflow:
         self.Securities[isin] = Security(isin,mv,currency)
         self.Securities[isin].SetDuration(duration)
         
+        if self.EconomicModels:
+            for n,e in self.EconomicModels.iteritems():
+                e.AddSecurity(self.Securities[isin])
+        
     def AddSecurityToPortfolio(self,pid,isin,nomamount):
         try:
             self.Portfolios[pid].AddSecurity(self.Securities[isin],nomamount)
         except:
-            raise Exception
+            raise Exception()
     
-    def SetNewEconomicModel(self,ecomodel):
+    def SetNewEconomicModel(self,name,ecomodel):
         """
         Add an economic model to the workflow
+        
+        If securities have been added to the workflow, then they are integrated to the model
         
         Parameters
         ----------
@@ -78,37 +89,14 @@ class Workflow:
         -------
         None
         """
-        self.EconomicModels.append(ecomodel)
+        self.EconomicModels[name]=ecomodel
+        if self.Securities:
+            for isin,s in self.Securities.iteritems():
+                ecomodel.AddSecurity(s)
+                
+    def Run(self,modelname,inputversion):
+        #test
+        self.EconomicModels[modelname].LoadInput()
     
-    def RunAndCollectEconomicModel(self):
-        """
-        Run an economic models, remove it from the list of models and add it to the garbage
-        
-        Parameters
-        ----------
-        None
-        
-        Returns
-        -------
-        None
-        """
-        try:
-            self.EconomicModels[0].Run()
-            self.EconomicModelGarbage.append(self.EconomicModels[0])
-        except:
-            raise Exception
     
-    def Run(self):
-        """
-        Run the whole workflow
-        
-        Parameters
-        ---------
-        None
-        
-        Returns
-        -------
-        None
-        """
-        self.RunAndCollectEconomicModel()
         

@@ -28,6 +28,28 @@ class YieldCurve:
         """        
         
         self.Description = description
+    
+    def SetYieldChangeRelationship(self,relationship):
+        """
+        Set the relationship governing the changes in the yield curve
         
-    def SetYieldChange(self,yc):
-        self.YieldChange = yc
+        Parameters
+        ----------
+        relationship: function
+            Function with the following form: None -> f(EconomicInputVariable(s),YieldCurve(s)) -> YieldChange instance        
+        
+        Returns
+        -------
+        None
+        """
+        self.Relationship = relationship
+    
+    def _SetYieldChange(self):
+        self.YieldChange = self.Relationship()
+
+class SovereignYieldCurve(YieldCurve):
+    
+    """
+    """
+    
+    
