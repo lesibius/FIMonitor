@@ -20,7 +20,8 @@ class EconomicModel:
     2) Then, add security to link input variables to ending yield curves
     3) Change the values of the input and run the model using the Run method
     """
-    def __init__(self):
+    def __init__(self,name):
+        self.Name = name
         self.InputVariables = {}        #Instances of input variable
         self.InputValueSet = {}         #Dictionary used to fill input variables
                                             #Shape: {scenario name: {InputVariable name: value}}
@@ -58,9 +59,10 @@ class EconomicModel:
             
         Returns
         -------
-        None
+        type: list
+            List with the following form: [isin,YieldCurve instance]
         """
-        self._ProvideYieldCurve(security)
+        return self._ProvideYieldCurve(security)
     
     def _LoadInput(self,scenarioname,*args,**kwargs):
         """
@@ -77,6 +79,16 @@ class EconomicModel:
         
         This method should be overrided in each model
         
+        Parameters
+        ----------
+        security: Security
+            Security to which a yield curve should be provided
+        
+        Returns
+        -------
+        Type: list
+            List with the following form: [isin,YieldCurve instance]
+            
         Warning
         -------
         When overriding this method, it is important to make sure that each instance of YieldCurve

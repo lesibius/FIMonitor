@@ -55,7 +55,7 @@ class SingleLeadingRate(EconomicModel):
         ratedescription: str
             Description of the leading interest rate
         """
-        EconomicModel.__init__(self)
+        EconomicModel.__init__(self,"Single Leading Rate")
         self.RateName = ratename
         self.SetNewInputVariable(StateEconomicVariable(ratename,ratedescription))
         self.InputVariables[self.RateName].SetValue(YieldCurve(ratedescription))
@@ -71,8 +71,9 @@ class SingleLeadingRate(EconomicModel):
         self.InputVariables[self.RateName].Value._SetYieldChange()
         
               
-    def _ProvideYieldCurve(self,security):
+    def _ProvideYieldCurve(self,security,updatesecurity = False):
         #One yield curve for all securities
         security.SetYieldCurve(self.InputVariables[self.RateName].Value)
+        return [security.ISIN,self.InputVariables[self.RateName]]
        
         
