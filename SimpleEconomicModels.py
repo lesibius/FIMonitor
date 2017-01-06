@@ -5,10 +5,9 @@ Created on Wed Jan  4 21:37:10 2017
 @author: clem
 """
 
-from EconomicModel import *
-from EconomicInputVariable import *
-from YieldCurve import *
-from Security import *
+from Economics.EconomicModel import *
+from Economics.EconomicInputVariable import *
+from InterestRate.YieldCurve import *
 
 class SingleLeadingRate(EconomicModel):
     """
@@ -62,6 +61,7 @@ class SingleLeadingRate(EconomicModel):
         self.InputVariables[self.RateName].SetValue(YieldCurve(ratedescription))
         self.InputVariables[self.RateName].Value.SetYieldChangeRelationship(self._ChangeYield)
         self.YieldShock = 0
+        self.YieldCurves.add(self.InputVariables[self.RateName].Value)
         
     def _ChangeYield(self):
         return self.YieldShock
@@ -74,4 +74,5 @@ class SingleLeadingRate(EconomicModel):
     def _ProvideYieldCurve(self,security):
         #One yield curve for all securities
         security.SetYieldCurve(self.InputVariables[self.RateName].Value)
+       
         

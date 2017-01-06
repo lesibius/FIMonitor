@@ -21,8 +21,10 @@ class EconomicModel:
     3) Change the values of the input and run the model using the Run method
     """
     def __init__(self):
-        self.InputVariables = {}
-        self.InputValueSet = {}
+        self.InputVariables = {}        #Instances of input variable
+        self.InputValueSet = {}         #Dictionary used to fill input variables
+                                            #Shape: {scenario name: {InputVariable name: value}}
+        self.YieldCurves = set()
         
     def SetNewInputVariable(self,inputvariable):
         """
@@ -44,9 +46,23 @@ class EconomicModel:
         self.InputVariables[inputvariable.Name]=inputvariable
         
     def AddSecurity(self,security):
+        """
+        Add a security to the model by providing it a yield curve
+        
+        This method requires to override the _ProvideYieldCurve method        
+        
+        Parameters
+        ----------
+        security: Security
+            Security to add to the the model
+            
+        Returns
+        -------
+        None
+        """
         self._ProvideYieldCurve(security)
     
-    def LoadInput(self,*args,**kwargs):
+    def _LoadInput(self,scenarioname,*args,**kwargs):
         """
         Load a set of values for the input of the model
         
@@ -60,5 +76,29 @@ class EconomicModel:
         Provide a yield curve to the security
         
         This method should be overrided in each model
+        
+        Warning
+        -------
+        When overriding this method, it is important to make sure that each instance of YieldCurve
+        created should be added to the self.YieldCurves set
         """
         raise NotImplementedError()
+        
+    def Run(self,scenarioname):
+        """
+        Run the model using a scenario name
+        
+        Parameters
+        ----------
+        scenarioname: str
+            Name of the scenario used to run the model
+            
+        Returns
+        -------
+        None
+        """
+        for inputname,value in self.InputValueSet.iteritems():
+            self.InputVariables[inputname].SetValue(value)
+        
+        for yc in self.YieldCurves:
+            yc.GetYieldChange()
