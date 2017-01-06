@@ -7,7 +7,7 @@ Created on Mon Jan  2 11:31:08 2017
 
 from Workflow import *
 
-wf = Workflow()
+wf = FixedIncomeMonitoringMaster()
 
 wf.SetNewSecurity("US123123",0.9937,"USD",5.0)
 wf.SetNewSecurity("CHF143543",1.134,"CHF",9.0)

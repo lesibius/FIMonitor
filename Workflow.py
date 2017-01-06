@@ -11,7 +11,7 @@ from InterestRate.YieldCurve import *
 from Economics.EconomicModel import *
 from SimpleEconomicModels import *
 
-class Workflow:
+class FixedIncomeMonitoringMaster:
     
     """
     Workflow management for the fixed income monitoring tool
@@ -74,30 +74,34 @@ class Workflow:
             self.Portfolios[pid].AddSecurity(self.Securities[isin],nomamount)
         except:
             raise Exception()
-    
-    def AddEconomicModel(self,name,ecomodel):
-        """
-        Add an economic model to the workflow
-        
-        If securities have been added to the workflow, then they are integrated to the model
-        
-        Parameters
-        ----------
-        ecomodel : EconomicModel
-            Economic model to add to the workflow
             
-        Returns
-        -------
-        None
-        """
-        self.EconomicModels[name]=ecomodel
-        if self.Securities:
-            for isin,s in self.Securities.iteritems():
+###################################################################################
+#                       Economic Model Management
+###################################################################################
+            
+    def AddEconomicModel(self,name,ecomodel):
+       """
+       Add an economic model to the workflow
+       
+       If securities have been added to the workflow, then they are integrated to the model
+       
+       Parameters
+       ----------
+       ecomodel : EconomicModel
+           Economic model to add to the workflow
+       
+       Returns
+       -------
+       None
+       """
+       self.EconomicModels[name]=ecomodel
+       if self.Securities:
+           for isin,s in self.Securities.iteritems():
                 ecomodel.AddSecurity(s)
-                
-    def Run(self,modelname,inputversion):
+         
+    def RunEconomicModel(self,modelname,inputversion):
         #test
-        self.EconomicModels[modelname].LoadInput()
+        self.EconomicModels[modelname]._LoadInput(inputversion)
     
     
         

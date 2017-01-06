@@ -12,8 +12,8 @@ class EconomicInputVariable:
     
     This class is an "abstract" class and cannot be used directly. It should be implemented through one of the following:
     
-    1)StateEconomicVariable: for independant variable (use SetValue method)
-    2)DependantEconomicVariable: for dependant variable (use SetEconomicRelationship method)
+    1)StateEconomicVariable: for independent variable (use SetValue method)
+    2)DependantEconomicVariable: for dependent variable (use SetEconomicRelationship method)
     """    
     
     def __init__(self,name,description):
@@ -50,7 +50,7 @@ class StateEconomicVariable(EconomicInputVariable):
     """
     Input variable for economic model.
     
-    Use this class for state (i.e. independant) variables
+    Use this class for state (i.e. independent) variables
     """
     
     def SetValue(self,value):
@@ -69,11 +69,11 @@ class StateEconomicVariable(EconomicInputVariable):
         """        
         self.Value = value
 
-class DependantEconomicVariable(EconomicInputVariable):
+class DependentEconomicVariable(EconomicInputVariable):
     """
     Input variable for economic model.
     
-    Use this class when the variable is not a variable state (i.e. it is dependant from other variable)
+    Use this class when the variable is not a variable state (i.e. it is dependent from other variable)
     """
     def SetEconomicRelationship(self,relationship):
         """
@@ -89,3 +89,4 @@ class DependantEconomicVariable(EconomicInputVariable):
     def GetValue(self):
         #Overrided method
         return self.Relationship()
+        

@@ -61,6 +61,7 @@ class SingleLeadingRate(EconomicModel):
         self.InputVariables[self.RateName].SetValue(YieldCurve(ratedescription))
         self.InputVariables[self.RateName].Value.SetYieldChangeRelationship(self._ChangeYield)
         self.YieldShock = 0
+        self.YieldCurves.add(self.InputVariables[self.RateName].Value)
         
     def _ChangeYield(self):
         return self.YieldShock
