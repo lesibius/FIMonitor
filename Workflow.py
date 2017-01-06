@@ -75,7 +75,7 @@ class Workflow:
         except:
             raise Exception()
     
-    def SetNewEconomicModel(self,name,ecomodel):
+    def AddEconomicModel(self,name,ecomodel):
         """
         Add an economic model to the workflow
         

@@ -22,7 +22,7 @@ wf.AddSecurityToPortfolio(1,"CHF143543",1000)
 wf.AddSecurityToPortfolio(2,"US123123",500)
 wf.AddSecurityToPortfolio(2,"CHF143543",1500)
 
-wf.SetNewEconomicModel("Single rate model",SingleLeadingRate())
+wf.AddEconomicModel("Single rate model",SingleLeadingRate())
 wf.SetNewSecurity("FR123123",1.0,"CHF",1.32)
 
 wf.AddSecurityToPortfolio(1,"FR123123",231)
