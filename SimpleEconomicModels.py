@@ -5,10 +5,9 @@ Created on Wed Jan  4 21:37:10 2017
 @author: clem
 """
 
-from EconomicModel import *
-from EconomicInputVariable import *
-from YieldCurve import *
-from Security import *
+from Economics.EconomicModel import *
+from Economics.EconomicInputVariable import *
+from InterestRate.YieldCurve import *
 
 class SingleLeadingRate(EconomicModel):
     """
@@ -74,4 +73,5 @@ class SingleLeadingRate(EconomicModel):
     def _ProvideYieldCurve(self,security):
         #One yield curve for all securities
         security.SetYieldCurve(self.InputVariables[self.RateName].Value)
+       
         

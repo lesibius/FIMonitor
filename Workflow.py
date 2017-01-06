@@ -5,10 +5,11 @@ Created on Tue Jan  3 18:41:22 2017
 @author: clem
 """
 
-from Portfolio import *
-from Security import *
-from YieldCurve import *
-from EconomicModel import *
+from FinUtil.Portfolio import *
+from FinUtil.Security import *
+from InterestRate.YieldCurve import *
+from Economics.EconomicModel import *
+from SimpleEconomicModels import *
 
 class Workflow:
     

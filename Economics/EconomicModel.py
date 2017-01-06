@@ -21,8 +21,9 @@ class EconomicModel:
     3) Change the values of the input and run the model using the Run method
     """
     def __init__(self):
-        self.InputVariables = {}
-        self.InputValueSet = {}
+        self.InputVariables = {}        #Instances of input variable
+        self.InputValueSet = {}         #Dictionary used to fill input variables
+                                            #Shape: {scenario name: **kwargs input}
         
     def SetNewInputVariable(self,inputvariable):
         """
@@ -46,7 +47,7 @@ class EconomicModel:
     def AddSecurity(self,security):
         self._ProvideYieldCurve(security)
     
-    def LoadInput(self,*args,**kwargs):
+    def _LoadInput(self,*args,**kwargs):
         """
         Load a set of values for the input of the model
         

@@ -5,11 +5,7 @@ Created on Mon Jan  2 11:31:08 2017
 @author: clem
 """
 
-from Security import *
-from Portfolio import *
-from YieldCurve import *
 from Workflow import *
-from SimpleEconomicModels import *
 
 wf = Workflow()
 
@@ -31,5 +27,5 @@ wf.SetNewSecurity("FR123123",1.0,"CHF",1.32)
 
 wf.AddSecurityToPortfolio(1,"FR123123",231)
 
-wf.Run('Single rate model',1)
+#wf.Run('Single rate model',1)
 
