@@ -34,6 +34,8 @@ class Security:
         
         self.ISIN = isin
         self.MarketValue = mv
+        self.PercentChange = 0
+        self.Currency = currency
     
     def SetDuration(self,duration):
         
@@ -47,22 +49,25 @@ class Security:
         """
         self.Duration = duration
     
-    def SetYieldCurve(self,yieldcurve):
+    def SetRelativeChange(self,pc):
         """
-        Set the yield curve of the Security instance
+        Set the percent change of the Security instance
         
         Parameters
         ----------
-        yieldcurve : YieldCurve
-            Yield curve to associate to the Security instance
+        pc: float
+            Change as a percentage of the market value        
+        
+        Returns
+        -------
+        None
         """
+        self.PercentChange = pc
         
-        self.YieldCurve = yieldcurve
-        
-    def GetPercentLoss(self):
+    def GetRelativeChange(self):
         
         """
-        Return the loss as percentage of the market value
+        Return the change as percentage of the market value
         
         Parameters
         ----------
@@ -71,6 +76,21 @@ class Security:
         Returns
         -------
         type : float
-            Loss as a percentage of the market value of the Security instance
+            Change as a percentage of the market value of the Security instance
         """
-        return self.Duration * self.YieldCurve.YieldChange
+        return self.PercentChange
+        
+    def GetAbsoluteChange(self):
+        """
+        Returns the absolute change per nominal amount
+        
+        Parameters
+        ----------
+        None
+        
+        Returns
+        -------
+        type: float
+            Change per nominal amount of the market value of the Security instance
+        """
+        return self.PercentChange * self.MarketValue

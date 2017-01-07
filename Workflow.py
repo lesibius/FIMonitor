@@ -5,49 +5,50 @@ Created on Fri Jan  6 19:22:50 2017
 @author: clem
 """
 
-class EconomicModelManager:
-    
-    def __init__(self):
-        self.EconomicModels = {}
-        
-    def AddEconomicModel(self,ecomodel):
-        if not ecomodel.Name in self.EconomicModels:
-            self.EconomicModels[ecomodel.Name]=ecomodel
-        else:
-            raise Exception("The economic model {0} is already present in the workflow".format(ecomodel.Name))
-class PortfolioManager:
-    
-    def __init__(self):
-        self.Portfolios = {}
-
-class SecurityManager:
-    
-    def __init__(self):
-        self.Securities = {}
-        
-    def AddEconomicModel(self,ecomodel):
-        
-        for isin,s in self.Securities.iteritems():
-            ecomodel.AddSecurity(s)
-        
+from WorkflowComponent.EconomicModelManager import *
+from WorkflowComponent.SecurityManager import *
         
 class MonitoringTool:
-    
+    """
+    Workflow manager of the monitoring tool
+    """
     def __init__(self):
-        self.EconomicModelManager = EconomicModelManager()
-        self.PortfolioManager = PortfolioManager()
         self.SecurityManager = SecurityManager()
-    
-    def AddSecurity(self,security):
-        self.SecurityManager.AddSecurity(security)
-        self.EconomicModelManager.AddSecurity(security)
-    
-    def AddEconomicModel(self,economicmodel):
-        self.EconomicModelManager.AddEconomicModel(economicmodel)
+        self.Portfolios = {}
+        self.EconomicModelManager = EconomicModelManager()
+        
+    def _AddSecurity(self,sec,override=False):
+        """
+        Add a Security instance to the workflow
+        
+        Parameters
+        ----------
+        sec: Security
+            Security instance to add to the workflow
+        override: bool
+            False if ove
+        """
+        if (not sec.ISIN in self.SecurityManager) | override:
+            self.SecurityManager.AddSecurity(sec)
+            self.EconomicModelManager.AddSecurity(sec)
+        else:
+            raise Exception("Error when adding the security {0} in the workflow".format(sec.ISIN))
+            
+    def _AddPortfolio(self,portfolio,override=False):
+        if (not portfolio.ID in self.Portfolios) | override:
+            self.Portfolios[portfolio.ID]=portfolio
+        else:
+            raise Exception("Error when adding the portfolio {0} in the workflow".format(portfolio.ID))
+            
+    def _AddSecurityToPortfolio(self,pid,isin,nominalamount):
+        self.Portfolios[pid].AddSecurity(self.SecurityManager[isin],nominalamount)
+        
+    def _AddEconomicModel(self,economicmodel,override=False):
+        self.EconomicModelManager.AddEconomicModel(economicmodel,override)
         self.SecurityManager.AddEconomicModel(economicmodel)
+    
+    def _PrintSecurityChangeOverview(self):
+        self.SecurityManager._PrintChangesOverview()
         
-    def AddSecurityToPortfolio(self,isin,pid,nominalamount):
-        self.PortfolioManager.AddSecurityToPortfolio(isin,pid,nominalamount)
-        
-    def LoadInput(self,ecomodelname,*args,**kwargs):
-        self.EconomicModelManager.EconomicModels[ecomodelname]._LoadInput(args,kwargs)
+    def LoadInput(self,modelname,scenarioname,**kwargs):
+        self.EconomicModelManager[modelname]._LoadInput(**kwargs)

@@ -5,8 +5,6 @@ Created on Mon Jan  2 11:34:49 2017
 @author: clem
 """
 
-from Loss import *
-
 
 class Portfolio:
     
