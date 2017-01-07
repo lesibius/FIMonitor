@@ -56,24 +56,60 @@ class SingleLeadingRate(EconomicModel):
             Description of the leading interest rate
         """
         EconomicModel.__init__(self,"Single Leading Rate")
+        self.LeadingRate = YieldCurve(ratedescription)
         self.RateName = ratename
         self.SetNewInputVariable(StateEconomicVariable(ratename,ratedescription))
-        self.InputVariables[self.RateName].SetValue(YieldCurve(ratedescription))
-        self.InputVariables[self.RateName].Value.SetYieldChangeRelationship(self._ChangeYield)
+        self.InputVariables[self.RateName].SetValue(self.LeadingRate)
+        self.LeadingRate.SetYieldChangeRelationship(self._ChangeYield)
         self.YieldShock = 0
-        self.YieldCurves.add(self.InputVariables[self.RateName].Value)
+        self.YieldCurves[ratename] = self.LeadingRate
         
     def _ChangeYield(self):
         return self.YieldShock
         
-    def ApplyShock(self,yieldshock):
-        self.YieldShock = yieldshock
-        self.InputVariables[self.RateName].Value._SetYieldChange()
-        
               
-    def _ProvideYieldCurve(self,security,updatesecurity = False):
+    def _ProvideYieldCurve(self,security):
         #One yield curve for all securities
-        security.SetYieldCurve(self.InputVariables[self.RateName].Value)
-        return [security.ISIN,self.InputVariables[self.RateName]]
-       
+        self.InputVariables[self.RateName].Value.AddSecurity(security)
+    
+    def _LoadInput(self,yieldshock):
+        self.YieldShock = yieldshock
+
+
+
+class SingleLeadingRateByCurrency(EconomicModel):
+    
+    def __init__(self):
+        EconomicModel.__init__(self,"Single Leading Rate by Currency")
+        self.YieldChanges = {}
         
+    def AddCurrency(self,currency):
+        if not currency in self.YieldChanges.keys():
+            def tempfun():
+                return self.YieldChanges[currency]
+            self.YieldCurves[currency] = YieldCurve("Government yield curve for {0}".format(currency))
+            self.YieldCurves[currency].SetYieldChangeRelationship(tempfun)
+            self.YieldChanges[currency] = 0
+            self.InputVariables[currency]=self.YieldCurves[currency]
+        else:
+            raise Exception("Impossible to add {0} to {1} model".format(currency,self.Name))
+    
+    def GetCurrencies(self):
+        return self.YieldCurves.keys
+    
+    def _ProvideYieldCurve(self,security):
+        tempcur = security.Currency
+        try:
+            self.AddCurrency(tempcur)       #Try to add
+        except:
+            pass
+        self.YieldCurves[tempcur].AddSecurity(security)
+        
+    def _SetYieldShock(self,currency,change):
+        self.YieldChanges[currency] = change
+    
+    def _LoadInput(self,**kwargs):
+        for cur,change in kwargs.iteritems():
+            self._SetYieldShock(cur,change)
+    
+    

@@ -9,9 +9,42 @@ from EconomicInputVariable import *
 
 class EconomicModel:
     """
-    Class responsible for the management of economic models
+    Class used to describbe economic models.
     
-    As such, this class can be considered as "abstract"
+    As such, this class can be considered as "abstract".
+    
+    Main Attributes of the Class
+    ----------------------------
+    Name: str
+        Name of the model. This value should be unique as it is used as a key in the workflow management
+        of the monitoring tool.
+    InputVariables: Dict(EconomicInputVariable)
+        Dictionary of input variables used in the model. The name (Name attribute of EconomicInputVariable 
+        instances) is used as the key for the dictionary.
+    YieldCurves: Dict(YieldCurve)
+        Dictionary of YieldCurve instances used to set the relative change in value of securities. Securities
+        that relies on the model are usually stored within these YieldCurve instances.
+    
+    
+    Common Methods to Subclasses
+    ----------------------------
+    SetNewInputVariable:
+        Set a new input variable to the model
+    AddSecurity:
+        Add a Security instance to the economic model. Usually, this task is performed by adding the Security
+        to one of the YieldCurve instance contained in the YieldCurves attribute of the EconomicModel class.
+        Thus, an EconomicModel does not contain Security instances per se.
+    ApplyShock:
+        This method runs in two parts
+        
+        1) First, values of the change in the yield curves are pulled from the model through the relationships and input variables
+        2) Then, the values of the change in the yield curves are pushed to the Security instance stored in the YieldCurve instances.
+    
+    Methods to Override in Subclasses
+    ---------------------------------
+    
+    1) _ProvideYieldCurve
+    2) _LoadInput
     
     Functionning
     ------------
@@ -23,9 +56,7 @@ class EconomicModel:
     def __init__(self,name):
         self.Name = name
         self.InputVariables = {}        #Instances of input variable
-        self.InputValueSet = {}         #Dictionary used to fill input variables
-                                            #Shape: {scenario name: {InputVariable name: value}}
-        self.YieldCurves = set()
+        self.YieldCurves = {}           #End point yield curves
         
     def SetNewInputVariable(self,inputvariable):
         """
@@ -64,7 +95,7 @@ class EconomicModel:
         """
         return self._ProvideYieldCurve(security)
     
-    def _LoadInput(self,scenarioname,*args,**kwargs):
+    def _LoadInput(self,**kwargs):
         """
         Load a set of values for the input of the model
         
@@ -96,21 +127,18 @@ class EconomicModel:
         """
         raise NotImplementedError()
         
-    def Run(self,scenarioname):
+    def ApplyShock(self):
         """
-        Run the model using a scenario name
+        Apply a yield shock to the Security instances added to the model
         
         Parameters
         ----------
-        scenarioname: str
-            Name of the scenario used to run the model
-            
+        None
+        
         Returns
         -------
         None
         """
-        for inputname,value in self.InputValueSet.iteritems():
-            self.InputVariables[inputname].SetValue(value)
-        
-        for yc in self.YieldCurves:
-            yc.GetYieldChange()
+        for y in self.YieldCurves.values():
+            y._SetYieldChange()
+            y.PushSecurityRelativeChange()

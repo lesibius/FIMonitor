@@ -28,6 +28,7 @@ class YieldCurve:
         """        
         
         self.Description = description
+        self.Securities = set()
     
     def SetYieldChangeRelationship(self,relationship):
         """
@@ -46,10 +47,13 @@ class YieldCurve:
     
     def _SetYieldChange(self):
         self.YieldChange = self.Relationship()
-
-class SovereignYieldCurve(YieldCurve):
-    
-    """
-    """
+        
+    def AddSecurity(self,sec):
+        self.Securities.add(sec)
+        
+    def PushSecurityRelativeChange(self):
+        for sec in self.Securities:
+            pc = self.YieldChange * sec.Duration
+            sec.SetRelativeChange(pc)
     
     
