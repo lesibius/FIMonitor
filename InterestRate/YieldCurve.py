@@ -53,7 +53,7 @@ class YieldCurve:
         
     def PushSecurityRelativeChange(self):
         for sec in self.Securities:
-            pc = self.YieldChange * sec.Duration
-            sec.SetRelativeChange(pc)
+            pc = -self.YieldChange * sec.Duration
+            sec._SetRelativeChange(pc)
     
     
