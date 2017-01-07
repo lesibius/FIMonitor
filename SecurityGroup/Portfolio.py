@@ -5,6 +5,7 @@ Created on Mon Jan  2 11:34:49 2017
 @author: clem
 """
 
+import operator
 
 class Portfolio:
     
@@ -140,7 +141,39 @@ class Portfolio:
         self.CurrencyConverter = converter
         
     def GetAverageDuration(self):
+        """
+        Compute the average duration of the portfolio
+        
+        If multiple currencies are present in the portoflio, market values of the positions 
+        are converted to the reporting currency prior computing the average duration.
+        
+        Parameters
+        ----------
+        None
+        
+        Returns
+        -------
+        type: float
+            Average duration of the portfolio
+        """
         tempDuration = 0
         for sec,nomAmount in self.Holdings.iteritems():
             tempDuration = tempDuration + self.CurrencyConverter.Convert(sec.Currency,self.ReportingCurrency,sec.Duration * sec.MarketValue * nomAmount)
         return tempDuration/self.GetMarketValue()
+        
+    def GetRankedSecurities(self):
+        """
+        Provide a list of ISIN ranked by change in market value
+        
+        Parameters
+        ----------
+        None
+        
+        Returns
+        -------
+        type: list(str)
+            List of ISIN ranked by change in market value
+        """
+        #First, get a dictionary {ISIN: change}
+        tempdic = {sec: self.CurrencyConverter.Convert(sec.Currency,self.ReportingCurrency,self.Holdings[sec] * sec.MarketValue * sec.GetAbsoluteChange()) for sec in self.Holdings.keys()}
+        return sorted(tempdic.items(), key=operator.itemgetter(1))
