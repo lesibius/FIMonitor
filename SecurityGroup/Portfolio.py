@@ -12,7 +12,7 @@ class Portfolio:
     Aggregation of Security instances with related methods
     """    
     
-    def __init__(self,portfolioID,description):
+    def __init__(self,portfolioID,description,reportingcurrency = "USD"):
         
         """
         Constructor of the Portfolio class
@@ -23,6 +23,8 @@ class Portfolio:
             ID of the portfolio
         description : str
             Description of the portfolio
+        reportingcurrency: str
+            Reporting currency of the portfolio
             
         Returns
         -------
@@ -33,6 +35,7 @@ class Portfolio:
         self.Description = description
         self.Holdings = {}
         self.ScenarioLosses = {}
+        self.ReportingCurrency = reportingcurrency
     
     
     def AddSecurity(self,sec,nomAmount):
@@ -89,8 +92,49 @@ class Portfolio:
             tempMV = tempMV + nomAmount * sec.MarketValue
         return tempMV
         
-    def ComputeLoss(self,scenarioName):
-        self.ScenarioLosses[scenarioName] = {}
-        for sec, nomAmount in self.Holdings.iteritems():
-            self.ScenarioLosses[scenarioName][sec]=Loss(sec.GetPercentLoss(),sec.MarketValue * nomAmount)
+    def GetAbsoluteChange(self):
+        """
+        Compute the absolute change in the market value of the Portfolio instance
         
+        Parameters
+        ----------
+        None
+        
+        Returns
+        -------
+        type: float
+            Absolute change in the market value of the Portoflio instance
+        """
+        tempChange = 0
+        for sec,nomAmount in self.Holdings.iteritems():
+            tempChange = tempChange + nomAmount * sec.GetAbsoluteChange()
+        return tempChange
+    
+    def GetRelativeChange(self):
+        """
+        Compute the relative change in the market value of the Portfolio instance
+        
+        Parameters
+        ----------
+        None
+        
+        Returns
+        -------
+        None
+        """
+        return self.GetAbsoluteChange() / self.GetMarketValue()
+    
+    def SetCurrencyConverter(self,converter):
+        """
+        Provides a currency convert to the Portfolio instance
+        
+        Parameters
+        ----------
+        converter: CurrencyConverter
+            CurrencyConverter instance used to convert currencies within the Portfolio instance
+            
+        Returns 
+        -------
+        None
+        """
+        self.CurrencyConverter = converter
