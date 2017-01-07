@@ -8,7 +8,37 @@ Created on Mon Jan  2 11:27:30 2017
 class Security:
     
     """
-    The Security class allows to store the information related to a fixed income security
+    The Security class allows to store the information related to a fixed income security and perform 
+    operation with it.
+    
+    Attributes of the Class
+    -----------------------
+    ISIN: str
+        ISIN of the security (or unique identifier)
+    MarketValue: float
+        Market value per amount of nominal value.
+    Currency: str
+        Currency of the security
+    PercentChange: float
+        Relative change in price of the security
+    Duration: float or Duration
+        Value of duration, whether modified or key rate. If float, assumed to be modified duration
+        
+    Methods of the Class
+    --------------------
+    SetDuration:
+        Set the duration
+    _SetRelativeChange
+        Set the relative change in value of the security for a given yield shock (called by YieldCurve
+        instance)
+    GetRelativeChange:
+        Provide the relative change in value associated to the current yield shock (defined by the last
+        economic model used)
+    GetAbsoluteChange:
+        Provide the absolute change in value associated to the current yield shock (defined by the last
+        economic model used)
+    
+    
     """    
     
     def __init__(self,isin,mv,currency):
@@ -49,7 +79,7 @@ class Security:
         """
         self.Duration = duration
     
-    def SetRelativeChange(self,pc):
+    def _SetRelativeChange(self,pc):
         """
         Set the percent change of the Security instance
         
