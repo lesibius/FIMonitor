@@ -18,35 +18,31 @@ from SecurityGroup.CurrencyConverter import *
 slr = SingleLeadingRate()
 govlr = SingleLeadingRateByCurrency()
 
-#Currency converter
-exchange = CurrencyConverter()
-exchange.AddCurrency("USD")
-exchange.AddCurrency("EUR")
-exchange.AddCurrency("CHF")
-
-exchange.SetExchangeRate("EUR","USD",1.05)
-exchange.SetExchangeRate("EUR","CHF",1.07)
-exchange.SetExchangeRate("USD","CHF",1.02)
 
 #Securities
-bond1 = Security("FR123123",0.99,"EUR")
+bond1 = Security("FR123123",1,"EUR")
 bond1.SetDuration(5)
-bond2 = Security("CH123123",1.03,"CHF")
+bond2 = Security("CH123123",1,"CHF")
 bond2.SetDuration(2)
-bond3 = Security("US123123",0.98,"USD")
+bond3 = Security("US123123",1,"USD")
 bond3.SetDuration(10)
-bond4 = Security("US321098",0.97,"USD")
+bond4 = Security("US321098",1,"USD")
 bond4.SetDuration(7)
 secs = [bond1,bond2,bond3,bond4]
 
 #Portofolios
 p1 = Portfolio(1,"Discretionary")
-p2 = Portfolio(2,"Non-discretionary")
+p2 = Portfolio(2,"Non-discretionary","EUR")
 pflio = [p1,p2]
 
 
 #Workflow
 monitor = MonitoringTool()
+
+#Currencies
+monitor.SetExchangeRate("EUR","USD",1.05)
+monitor.SetExchangeRate("EUR","CHF",1.07)
+monitor.SetExchangeRate("USD","CHF",1.02)
 
 for s in secs:
     monitor._AddSecurity(s)
@@ -69,20 +65,22 @@ print("\nShock 1:")
 monitor.LoadInput("Single Leading Rate","Scenario 1",yieldshock = 0.001)
 monitor.EconomicModelManager["Single Leading Rate"].ApplyShock()   
 monitor._PrintSecurityChangeOverview()
+monitor._PrintPortfolio_()
 print("\nShock 2:")
 monitor.LoadInput("Single Leading Rate","Scenario 2",yieldshock=0.002)
 slr.ApplyShock() 
 monitor._PrintSecurityChangeOverview()
+monitor._PrintPortfolio_()
 print("\nShock 3:")
 govlr._LoadInput(**{"EUR":0.001,"USD":0.001,"CHF":0.002})
 govlr.ApplyShock()
 monitor._PrintSecurityChangeOverview()
-print("\nShock 3:")
+monitor._PrintPortfolio_()
+print("\nShock4:")
 govlr._LoadInput(**{"EUR":0.001,"USD":0.01,"CHF":0.002})
 govlr.ApplyShock()
 monitor._PrintSecurityChangeOverview()
+monitor._PrintPortfolio_()
 
-print(p1.GetAbsoluteChange())
-print(p1.GetRelativeChange())
 
 

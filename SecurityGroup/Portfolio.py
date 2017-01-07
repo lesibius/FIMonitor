@@ -89,7 +89,7 @@ class Portfolio:
         
         tempMV = 0
         for sec, nomAmount in self.Holdings.iteritems():
-            tempMV = tempMV + nomAmount * sec.MarketValue
+            tempMV = tempMV + self.CurrencyConverter.Convert(sec.Currency,self.ReportingCurrency,nomAmount * sec.MarketValue)
         return tempMV
         
     def GetAbsoluteChange(self):
@@ -107,7 +107,7 @@ class Portfolio:
         """
         tempChange = 0
         for sec,nomAmount in self.Holdings.iteritems():
-            tempChange = tempChange + nomAmount * sec.GetAbsoluteChange()
+            tempChange = tempChange + self.CurrencyConverter.Convert(sec.Currency,self.ReportingCurrency,nomAmount * sec.GetAbsoluteChange())
         return tempChange
     
     def GetRelativeChange(self):
@@ -138,3 +138,9 @@ class Portfolio:
         None
         """
         self.CurrencyConverter = converter
+        
+    def GetAverageDuration(self):
+        tempDuration = 0
+        for sec,nomAmount in self.Holdings.iteritems():
+            tempDuration = tempDuration + self.CurrencyConverter.Convert(sec.Currency,self.ReportingCurrency,sec.Duration * sec.MarketValue * nomAmount)
+        return tempDuration/self.GetMarketValue()
