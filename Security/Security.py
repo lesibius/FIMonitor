@@ -61,7 +61,6 @@ class Security:
         A new instance of Security
         
         """        
-        
         self.ISIN = isin
         self.MarketValue = mv
         self.PercentChange = 0
