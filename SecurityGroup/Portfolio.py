@@ -11,12 +11,52 @@ class Portfolio:
     
     """
     Aggregation of Security instances with related methods
+    
+    Main Attributes
+    ---------------
+    PortfolioID: Any
+        ID of the portfolio
+    Description: str
+        Description of the Portfolio instance
+    ReportingCurrency: str
+        Reporting currency of the Portfolio (ISO code)
+    Holdings: {Security: float}
+        Holdings of the Portfolio. The float numbers represent the number of security or
+        the nominal amount owned. There is no prescription over which one to choose, but
+        it should be consistent.
+    CurrencyConverter: CurrencyConverter
+        Instance of CurrencyConverter responsible to convert values in the Portfolio instance
+        
+    
+    Main Methods
+    ------------
+    AddSecurity:
+        Add a security to the portfolio
+    GetMarketValue:
+        Returns the market value of the portfolio
+    GetAbsoluteChange:
+        Return the absolute change in market value due to the change in yield of the 
+        underlying securities
+    GetRelativeChange:
+        Returns the relative change in value of the portfolio due to the change in yield of
+        the underlying securities
+    SetCurrencyConverter:
+        Set the CurrencyConverter instance to use in the Portfolio instance
+    GetAverageDuration:
+        Returns the average duration of the portfolio
+    GetRankedSecurities:
+        Returns a ranking of securities by absolute loss in the portfolio
+    
+    
+    
+        
     """    
     
     def __init__(self,portfolioID,description,reportingcurrency = "USD"):
         
         """
         Constructor of the Portfolio class
+        ----------------------------------
         
         Parameters
         ----------
@@ -35,7 +75,6 @@ class Portfolio:
         self.ID = portfolioID
         self.Description = description
         self.Holdings = {}
-        self.ScenarioLosses = {}
         self.ReportingCurrency = reportingcurrency
     
     
