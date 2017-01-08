@@ -108,7 +108,7 @@ class Portfolio:
         """
         tempChange = 0
         for sec,nomAmount in self.Holdings.iteritems():
-            tempChange = tempChange + self.CurrencyConverter.Convert(sec.Currency,self.ReportingCurrency,nomAmount * sec.GetAbsoluteChange())
+            tempChange = tempChange + self.CurrencyConverter.Convert(sec.Currency,self.ReportingCurrency,nomAmount * sec.GetAbsoluteChange() * sec.MarketValue)
         return tempChange
     
     def GetRelativeChange(self):
