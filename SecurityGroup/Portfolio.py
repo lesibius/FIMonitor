@@ -14,7 +14,7 @@ class Portfolio:
     
     Main Attributes
     ---------------
-    PortfolioID: Any
+    ID: Any
         ID of the portfolio
     Description: str
         Description of the Portfolio instance
