@@ -8,6 +8,7 @@ Created on Fri Jan  6 19:22:50 2017
 from WorkflowComponent.EconomicModelManager import *
 from WorkflowComponent.SecurityManager import *
 from SecurityGroup.CurrencyConverter import *
+from SecurityGroup.AggregatedPortfolio import *
         
 class MonitoringTool:
     """

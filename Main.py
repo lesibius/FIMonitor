@@ -14,26 +14,13 @@ from SimpleEconomicModels import *
 
 from SecurityGroup.CurrencyConverter import *
 
+import csv
+
+
+
 # Economic models
 slr = SingleLeadingRate()
 govlr = SingleLeadingRateByCurrency()
-
-
-#Securities
-bond1 = Security("FR123123",0.99,"EUR")
-bond1.SetDuration(5)
-bond2 = Security("CH123123",1.01,"CHF")
-bond2.SetDuration(2)
-bond3 = Security("US123123",1.12,"USD")
-bond3.SetDuration(10)
-bond4 = Security("US321098",0.95,"USD")
-bond4.SetDuration(7)
-secs = [bond1,bond2,bond3,bond4]
-
-#Portofolios
-p1 = Portfolio(1,"Discretionary")
-p2 = Portfolio(2,"Non-discretionary","EUR")
-pflio = [p1,p2]
 
 
 #Workflow
@@ -44,19 +31,25 @@ monitor.SetExchangeRate("EUR","USD",1.05)
 monitor.SetExchangeRate("EUR","CHF",1.07)
 monitor.SetExchangeRate("USD","CHF",1.02)
 
-for s in secs:
-    monitor._AddSecurity(s)
+    
+with open('Securities.csv','r') as csvfile:
+    spamreader = csv.DictReader(csvfile,delimiter=',')
+    for row in spamreader:
+        tempsec = Security(row["ISIN"],float(row["Market Value"]),row["Currency"])
+        tempsec.SetDuration(float(row["Duration"]))
+        monitor._AddSecurity(tempsec)
+    
+with open('Portfolio.csv','r') as csvfile:
+    spamreader = csv.DictReader(csvfile,delimiter=',')
+    for row in spamreader:
+        temppflio = Portfolio(row["Portfolios"],row["Description"],row["Currency"])
+        monitor._AddPortfolio(temppflio)
+        
+with open('Holdings.csv','r') as csvfile:
+    spamreader = csv.DictReader(csvfile,delimiter=',')
+    for row in spamreader:
+        monitor._AddSecurityToPortfolio(row["ID"],row["ISIN"],float(row["Amount"]))
 
-for p in pflio:
-    monitor._AddPortfolio(p)
-
-monitor._AddSecurityToPortfolio(1,"FR123123",1000)
-monitor._AddSecurityToPortfolio(1,"CH123123",500)
-monitor._AddSecurityToPortfolio(1,"US123123",1500)
-monitor._AddSecurityToPortfolio(1,"US321098",300)
-monitor._AddSecurityToPortfolio(2,"FR123123",1500)
-monitor._AddSecurityToPortfolio(2,"CH123123",1000)
-monitor._AddSecurityToPortfolio(2,"US123123",500)
 
 monitor._AddEconomicModel(slr)
 monitor._AddEconomicModel(govlr)
@@ -82,13 +75,26 @@ govlr.ApplyShock()
 monitor._PrintSecurityChangeOverview()
 monitor._PrintPortfolio_()
 
-secranking = monitor.Portfolios[1].GetRankedSecurities()
+
+secranking = monitor.Portfolios["A"].GetRankedSecurities()
 for s in secranking:
     print("{} - {:5.2f}".format(s[0].ISIN,s[1]))
 print("\n")
+
+"""
 secranking = monitor.Portfolios[2].GetRankedSecurities()
 for s in secranking:
     print("{} - {:5.2f}".format(s[0].ISIN,s[1]))
+"""
 
-
+ap = AggregatedPortfolio("12","Company","USD")
+ap.SetCurrencyConverter(monitor.CurrencyConverter)
+ap.AddPortfolio(monitor.Portfolios["A"])
+ap.AddPortfolio(monitor.Portfolios["F"])
+ap.AggregateHoldings()
+print(ap.Holdings)
+secranking = ap.GetRankedSecurities()
+for s in secranking:
+    print("{} - {:5.2f}".format(s[0].ISIN,s[1]))
+print(ap.GetRelativeChange())
 
